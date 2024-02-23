@@ -4,7 +4,7 @@ import glob
 import datetime
 
 # Import Folder
-root_directory = 'data'
+root_directory = '/data'
 
 def bin2csv(log_filename):
 
