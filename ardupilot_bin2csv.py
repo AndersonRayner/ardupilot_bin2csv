@@ -1,6 +1,7 @@
 from pymavlink import DFReader
 import os
 import glob
+import datetime
 
 # Import Folder
 root_directory = 'data'
@@ -22,6 +23,8 @@ def bin2csv(log_filename):
     # Save parameter files
     print(f"\tSaving parameter file")
     fid = open(os.path.join(output_path,'params.txt'), 'w')
+    timestamp = datetime.datetime.fromtimestamp(log.clock.timebase).strftime("%Y-%m-%d-%H-%M-%S")
+    print(f"# Parameters exported from {log_filename}\n# {timestamp}\n#",file=fid)
     for param, value in sorted(log.params.items()) :
         print(f"{param}={value}",file=fid)
     fid.close()
