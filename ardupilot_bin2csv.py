@@ -1,10 +1,14 @@
 from pymavlink import DFReader
 import os
+import glob
+
+# Import Folder
+root_directory = 'data'
 
 def bin2csv(log_filename):
 
     # Import Log
-    print(f"Importing {log_filename}")
+    print(f"Processing {log_filename}")
     if log_filename.endswith('.log'):
         log = DFReader.DFReader_text(log_filename)
     else:
@@ -12,10 +16,19 @@ def bin2csv(log_filename):
 
     # File was opened, create directory for saving data
     output_path = os.path.join(os.path.splitext(log_filename)[0])
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
+    if not os.path.exists(os.path.join(output_path,'csv')):
+        os.makedirs(os.path.join(output_path,'csv'))
+
+    # Save parameter files
+    print(f"\tSaving parameter file")
+    fid = open(os.path.join(output_path,'params.txt'), 'w')
+    for param, value in sorted(log.params.items()) :
+        print(f"{param}={value}",file=fid)
+    fid.close()
+    print(f"\t\t{len(log.params)} parameters written")
 
     # Save each data stream
+    print('\tImporting data streams')
     skip_fmt_name = ['FMT','PARM','UNIT','MULT','FMTU']
     fid = {}
     line = []
@@ -47,9 +60,9 @@ def bin2csv(log_filename):
 
         # Open a text file if not already open
         if channel_name not in fid :
+
             # Open the file
-            print(f"\tFound {channel_name}")
-            fid[channel_name] = open(os.path.join(output_path,channel_name+'.csv'), 'w')
+            fid[channel_name] = open(os.path.join(output_path,'csv',channel_name+'.csv'), 'w')
 
             # Write the header
             print(*line._fieldnames, sep=', ',file=fid[channel_name])
@@ -57,21 +70,28 @@ def bin2csv(log_filename):
         # Write the data
         print(*line._elements, sep=', ',file=fid[channel_name])
 
+        # Update the user
+        if log.remaining % 10000 == 0 :
+            print(f"\033[K\t\t{log.remaining} lines remaining",end='\r')
+
     # Close open files
     for files in fid :
         fid[files].close
 
-    # Save the parameters
-    print(f"\nSaving parameter file (not yet implemented)")
-
     # All done
+    print(f"\033[K\t\tDone")
     return
 
 if __name__ == "__main__":
 
+    # Find all *.bin files
+    log_files = sorted(glob.glob(os.path.join(root_directory,"**/*.bin*"), recursive=True))
+
     # Import the file
-    bin2csv('input_file/ardupilot.bin')
+    for ii in range(len(log_files)):
+        print(f'{ii+1:2d}/{len(log_files):2d} | ', end='')
+        bin2csv(log_files[ii])
 
     # All done
-    print("Done!")
+    print("All log files imported!")
     exit (0)
