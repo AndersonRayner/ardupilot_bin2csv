@@ -1,2 +1,4 @@
 # ardupilot_bin2csv requirements
 pymavlink
+pandas
+matplotlib
