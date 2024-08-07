@@ -11,8 +11,8 @@ import csv
 
 # Import Folder
 root_directory = '/data'
-root_directory = '/media/matt/OS/Users/matt/Downloads/for_aerospaceCorp/'
-root_directory = '/home/matt/Documents/aerospace_corp/2024-07-25_NorthField/data/uav'
+# root_directory = '/media/matt/OS/Users/matt/Downloads/for_aerospaceCorp/'
+# root_directory = '/home/matt/Documents/aerospace_corp/2024-07-25_NorthField/data/uav'
 
 def bin2csv(log_filename):
 
@@ -239,7 +239,7 @@ def plot_data(log_filename) :
     output = list(zip(*output))
 
     # File path where the CSV file will be saved
-    csv_file = os.path.join(os.path.splitext(log_filename)[0],os.path.splitext(os.path.basename(log_filename))[0]+'.csv')
+    csv_file = os.path.join(os.path.dirname(log_filename),os.path.splitext(os.path.basename(log_filename))[0]+'.csv')
 
     # Writing to the CSV file
     with open(csv_file, mode='w', newline='') as file:
@@ -254,8 +254,6 @@ def plot_data(log_filename) :
         # Data
         writer.writerows(output)
 
-
-    exit (0)
     # Show the plot
     # plt.show()
     # exit (0)
@@ -274,7 +272,7 @@ if __name__ == "__main__":
     # Import the file
     for ii in range(len(log_files)):
         print(f'{ii+1:2d}/{len(log_files):2d} | ', end='')
-        # bin2csv(log_files[ii])
+        bin2csv(log_files[ii])
         plot_data(log_files[ii]) 
 
     # All done
