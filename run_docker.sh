@@ -16,6 +16,7 @@ docker build \
 
 FOLDER_TO_EXPORT=/media/matt/OS/Users/matt/Downloads/for_aerospaceCorp/
 FOLDER_TO_EXPORT=/media/matt/OS/Users/matt/Downloads/NFFT/
+FOLDER_TO_EXPORT=/home/matt/Documents/aerospace_corp/2024-07-XX_NorthField/data/uav
 
 # Run all the scripts
 docker run -it --net=host --user $(id -u):$(id -g) --mount type=bind,source=$FOLDER_TO_EXPORT,target=/data ardupilot_bin2csv
